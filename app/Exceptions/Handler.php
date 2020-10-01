@@ -6,9 +6,13 @@ use App\Traits\ApiResponser;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException as ExceptionMethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -75,7 +79,25 @@ class Handler extends ExceptionHandler
         if($exception instanceof NotFoundHttpException){
             return $this->errorResponse('No se encontro la url especificada',404);
         }
-        return parent::render($request, $exception);
+        if($exception instanceof ExceptionMethodNotAllowedHttpException){
+            return $this->errorResponse('El método especificado en la petición no es valido',405);
+        }
+        if($exception instanceof HttpException){
+            return $this->errorResponse($exception->getMessage(), $exception->getStatusCode());
+        }
+        if($exception instanceof QueryException){
+            $codigo = $exception->errorInfo[1];
+            if($codigo==1451){
+                return $this->errorResponse('No se puede eliminar de forma permanente el recurso porque está relacionado con algún otro.',409);
+            }            
+        }
+        if(config('app.debug')){
+           return parent::render($request, $exception);  
+        }
+
+        return $this->errorResponse('Falla inesperada. Intente luego',500);
+
+       
     }
 
     protected function unauthenticated($request, AuthenticationException $exception)
