@@ -66,33 +66,16 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(User $user)
     {
-        $usuario = User::findOrFail($id);
+          /* return response()->json(['data' => $user], 200); */
 
-        /* return response()->json(['data' => $usuario], 200); */
-
-        return $this->showOne($usuario, 200);
+        return $this->showOne($user);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    
+    public function update(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
 
         $rules = [
             'email' => 'email|unique:users,email,' . $user->id,
@@ -139,11 +122,9 @@ class UserController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(User $user)
     {
-        $user = User::findOrFail($id);
-
-        $user->delete();
+       $user->delete();
 
         return $this->showOne($user, 200);
     }
