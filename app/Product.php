@@ -23,6 +23,9 @@ class Product extends Model
         'seller_id'
     ];
 
+    protected $hidden = [
+        'pivot'
+    ];
     /* funcion que determina si es disponible o no */
 
     public function estaDisponible()

@@ -15,6 +15,9 @@ class Category extends Model
         'description',
     ];
 
+    protected $hidden = [
+        'pivot'
+    ];
    /*  relcion muchos a muchos con producto se relaciona con belongsTo */
 
    public function products()
