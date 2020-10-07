@@ -33,7 +33,16 @@ class User extends Authenticatable
         'verification_token',
         'admin',
     ];
-
+    /**
+     * The attributes that should be hidden for arrays.
+     *
+     * @var array
+     */
+    protected $hidden = [
+            'password',
+            'remember_token',
+            'verification_token',
+        ];
     //mutadores de nombre y de correo electronico
     public function setNameAttribute($valor){
         $this->attributes['name'] = strtolower($valor);
@@ -50,16 +59,7 @@ class User extends Authenticatable
     
   
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-        'verification_token',
-    ];
+    
 
     /**
      * The attributes that should be cast to native types.
