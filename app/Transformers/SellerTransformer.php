@@ -40,7 +40,8 @@ class SellerTransformer extends TransformerAbstract
                 [
                     'rel' => 'seller.products',
                     'href' => route('sellers.products.index', $seller->id),
-                ],                               
+                ],
+                               
                 [
                     'rel' => 'seller.transactions',
                     'href' => route('sellers.transactions.index', $seller->id),
@@ -63,6 +64,21 @@ class SellerTransformer extends TransformerAbstract
             'fechaCreacion'=>'created_at',
             'fechaActualizacion'=>'updated_at',
             'fechaEliminacion'=>'deleted_at',
+     
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+    }
+
+    public static function transformedAttribute($index)
+    {
+        $attributes = [
+            'id'=>'identificador',
+            'name'=>'nombre',
+            'email'=>'correo',
+            'verified'=>'esVerificado',
+            'created_at'=>'fechaCreacion',
+            'updated_at'=>'fechaActualizacion',
+            'deleted_at'=>'fechaEliminacion',
      
         ];
         return isset($attributes[$index]) ? $attributes[$index] : null;
