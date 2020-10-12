@@ -9,6 +9,11 @@ use Illuminate\Http\Request;
 
 class ProductCategoryController extends ApiController //lista de categorias de un producto especifico
 {
+    public function __construct()
+    {
+        $this->middleware('client.credentials')->only(['index']);
+        $this->middleware('auth:api')->except(['index']);
+    }
     /**
      * Display a listing of the resource.
      *

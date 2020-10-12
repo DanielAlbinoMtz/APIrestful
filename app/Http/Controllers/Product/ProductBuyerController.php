@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class ProductBuyerController extends ApiController //lista de compradores de un producto especifico
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
     /**
      * Display a listing of the resource.
      *
