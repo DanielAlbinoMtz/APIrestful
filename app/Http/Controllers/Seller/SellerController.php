@@ -11,6 +11,7 @@ class SellerController extends ApiController
     public function __construct()
     {
         parent::__construct();
+        $this->middleware('scope:read-general')->only('show');
     }
     /**
      * Display a listing of the resource.
@@ -28,9 +29,8 @@ class SellerController extends ApiController
 
     public function show(Seller $seller)
     {
-       /*  $vendedores = Seller::has('products')->findOrFail($id); */
+        /*  $vendedores = Seller::has('products')->findOrFail($id); */
         return $this->showOne($seller);
         /* return response()->json(['data'=> $vendedores],200); */
     }
-
 }

@@ -7,6 +7,7 @@ use App\Product;
 use App\Seller;
 use App\Transformers\ProductTransformer;
 use App\User;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -17,7 +18,9 @@ class SellerProductController extends ApiController
     {
         parent::__construct();
 
-        $this->middleware('transform.input:' . ProductTransformer::class)->only(['store','update']);
+        $this->middleware('transform.input:' . ProductTransformer::class)->only(['store', 'update']);
+
+        $this->middleware('scope:manage-products')->except('index');
     }
     /**
      * Display a listing of the resource.
@@ -26,9 +29,14 @@ class SellerProductController extends ApiController
      */
     public function index(Seller $seller) //lista de prodcutos de vendendor con id #
     {
-        $products = $seller->products;
+        if (request()->user()->tokenCan('read-general') || request()->user()->tokenCan('manage-products')) {
 
-        return $this->showAll($products);
+            $products = $seller->products;
+
+            return $this->showAll($products);
+        }
+
+        throw new AuthenticationException;
     }
 
     /**
@@ -69,14 +77,14 @@ class SellerProductController extends ApiController
         $this->validate($request, $rules);
 
         $this->verificarVendedor($seller, $product);
-        
-        $product -> fill($request -> only([
+
+        $product->fill($request->only([
             'name',
             'description',
             'quantity',
         ]));
 
-        if ($request -> has('status')) {
+        if ($request->has('status')) {
             $product->status = $request->status;
 
             if ($product->estaDisponible() && $product->categories()->count() == 0) {
@@ -87,17 +95,16 @@ class SellerProductController extends ApiController
         if ($request->hasFile('image')) {
             Storage::delete($product->image);
 
-            $product ->image = $request->image->store('');
+            $product->image = $request->image->store('');
         }
 
-        if($product->isClean()){
+        if ($product->isClean()) {
             return $this->errorResponse('Se debe especificar al menos un valor diferente para actualizar', 422);
         }
 
         $product->save();
 
         return $this->showOne($product);
-
     }
 
     /**
@@ -113,14 +120,14 @@ class SellerProductController extends ApiController
         Storage::delete($product->image);
 
         $product->delete();
-        
+
         return $this->showOne($product);
     }
 
-    protected function verificarVendedor(Seller $seller, Product $product){
+    protected function verificarVendedor(Seller $seller, Product $product)
+    {
         if ($seller->id != $product->seller_id) {
-            throw new HttpException(422,"El vendedor especificado no es el vendedor real del producto");
-            
+            throw new HttpException(422, "El vendedor especificado no es el vendedor real del producto");
         }
     }
 }
