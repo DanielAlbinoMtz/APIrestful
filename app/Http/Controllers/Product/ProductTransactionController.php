@@ -19,6 +19,8 @@ class ProductTransactionController extends ApiController
      */
     public function index(Product $product) //transacciones del producto con id 1
     {
+        $this->allowedAdminAction();
+
         $transaction = $product -> transactions;
 
         return $this->showAll($transaction);

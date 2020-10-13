@@ -19,6 +19,10 @@ class UserController extends ApiController
         $this->middleware('transform.input:' . UserTransformer::class)->only(['store','update']);
 
         $this->middleware('scope:manage-account')->only(['show','update']);
+
+        $this->middleware('can:view,user')->only('show');
+        $this->middleware('can:update,user')->only('show');
+        $this->middleware('can:delete,user')->only('destroy');
     }
 
     /**
@@ -28,6 +32,8 @@ class UserController extends ApiController
      */
     public function index()
     {
+        $this->allowedAdminAction();
+
         $usuarios = User::all();
 
         /* return response()->json(['data' => $usuarios], 200); */
@@ -113,6 +119,8 @@ class UserController extends ApiController
         /* error 409 un error en la peticion */
 
         if ($request->has('admin')) {
+            $this->allowedAdminAction();
+
             if (!$user->esVerificado()) {
                 return $this->errorResponse('Unicamente los usuarios verificados pueden cambiar su valor de administrador', 409);
             }
