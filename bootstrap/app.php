@@ -41,6 +41,9 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
+/* $app->register(
+    Fruitcake\Cors\CorsServiceProvider::class);
+ */
 /*
 |--------------------------------------------------------------------------
 | Return The Application

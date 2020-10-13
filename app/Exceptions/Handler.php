@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponser;
+use Asm89\Stack\CorsService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -101,7 +102,7 @@ class Handler extends ExceptionHandler
 
         return $this->errorResponse('Falla inesperada. Intente luego',500);
 
-        
+       /*  app(CorsService::class)->addActualRequestHeaders($response,$request); */
 
        
     }
